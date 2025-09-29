@@ -15,6 +15,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         // Tampilkan username di title
         title: Text('Selamat Datang, $username!'),
+        centerTitle: false, // Membuat judul rata kiri
         actions: [
           // Tambahkan tombol Logout
           IconButton(
@@ -33,26 +34,28 @@ class HomePage extends StatelessWidget {
       ),
       body: Column(
         children: [
+          // Banner
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
               child: Image.asset(
-                'assets/banner.png',
+                'assets/banner.png', // Sesuaikan nama banner jika berbeda
                 height: 150,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
           ),
+          // Grid menu
           Expanded(
             child: GridView.builder(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 16.0,
                 mainAxisSpacing: 16.0,
-                childAspectRatio: 0.7,
+                childAspectRatio: 0.75, // Disesuaikan untuk layout baru
               ),
               itemCount: foodMenuList.length,
               itemBuilder: (context, index) {
@@ -66,9 +69,12 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  // Widget _buildMenuCard dengan UI yang dimodifikasi
   Widget _buildMenuCard(BuildContext context, FoodMenu item) {
     return Card(
       clipBehavior: Clip.antiAlias,
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -80,7 +86,6 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              flex: 3,
               child: Image.asset(
                 item.imageUrl,
                 fit: BoxFit.cover,
@@ -93,42 +98,43 @@ class HomePage extends StatelessWidget {
                 },
               ),
             ),
-            Expanded(
-              flex: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Rp ${item.price}',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    item.categories.first,
+                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // --- UI BARU UNTUK HARGA DAN TOMBOL ---
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Harga
+                      Text(
+                        'Rp ${item.price}',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
                         ),
+                      ),
+                      // Tombol Pesan
+                      ElevatedButton(
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -137,11 +143,20 @@ class HomePage extends StatelessWidget {
                             ),
                           );
                         },
-                        child: const Text('Pesan'),
+                        // Styling agar tombol tidak terlalu besar
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text(
+                          'Pesan',
+                          style: TextStyle(fontSize: 12),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  // --- AKHIR DARI UI BARU ---
+                ],
               ),
             ),
           ],

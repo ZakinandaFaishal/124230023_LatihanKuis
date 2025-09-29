@@ -9,16 +9,25 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  String errorMessage = '';
+
+  final Map<String, String> userData = {'fulan': 'fulan', 'Zakinanda': '12345'};
+
+  bool checkLogin(String username, String password) {
+    return userData.containsKey(username) && userData[username] == password;
+  }
 
   void _login() {
-    // Validasi username dan password
-    if (_usernameController.text == 'fulan' &&
-        _passwordController.text == 'fulan') {
-      // Kirim username ke HomePage saat navigasi
+    bool isLoginIn = checkLogin(
+      _usernameController.text,
+      _passwordController.text,
+    );
+
+    if (isLoginIn) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -26,13 +35,9 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } else {
-      // Menampilkan pesan error jika login gagal
-      _scaffoldKey.currentState?.showSnackBar(
-        const SnackBar(
-          content: Text('Username atau Password salah!'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      setState(() {
+        errorMessage = 'Username atau Password salah!';
+      });
     }
   }
 
