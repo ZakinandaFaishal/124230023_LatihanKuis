@@ -1,19 +1,36 @@
 import 'package:flutter/material.dart';
-import '../data/food_data.dart'; // <-- 1. Impor file data
+import '../data/food_data.dart';
+import 'login_page.dart'; // Impor LoginPage untuk navigasi logout
 import 'order_page.dart';
 
-// Hapus class FoodItem yang lama karena sudah digantikan oleh FoodMenu
-
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  // Terima data username dari halaman login
+  final String username;
+
+  const HomePage({super.key, required this.username});
 
   @override
   Widget build(BuildContext context) {
-    // 2. Tidak perlu lagi mendefinisikan list di sini
-    // final List<FoodItem> menuItems = [...];
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Daftar Menu')),
+      appBar: AppBar(
+        // Tampilkan username di title
+        title: Text('Selamat Datang, $username!'),
+        actions: [
+          // Tambahkan tombol Logout
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () {
+              // Navigasi kembali ke LoginPage dan hapus semua halaman sebelumnya
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+                (Route<dynamic> route) => false,
+              );
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Padding(
@@ -35,13 +52,10 @@ class HomePage extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: 16.0,
                 mainAxisSpacing: 16.0,
-                childAspectRatio:
-                    0.7, // Sedikit diubah agar ada ruang untuk tombol
+                childAspectRatio: 0.7,
               ),
-              // 3. Gunakan list dari file data
               itemCount: foodMenuList.length,
               itemBuilder: (context, index) {
-                // 4. Ambil data dari foodMenuList
                 final FoodMenu item = foodMenuList[index];
                 return _buildMenuCard(context, item);
               },
@@ -52,12 +66,10 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // 5. Ubah parameter dari FoodItem menjadi FoodMenu
   Widget _buildMenuCard(BuildContext context, FoodMenu item) {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        // onTap tetap ada agar seluruh kartu bisa diklik
         onTap: () {
           Navigator.push(
             context,
@@ -68,8 +80,9 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
+              flex: 3,
               child: Image.asset(
-                item.imageUrl, // <-- Gunakan imageUrl
+                item.imageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return const Icon(
@@ -80,43 +93,42 @@ class HomePage extends StatelessWidget {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  // Menampilkan kategori pertama
-                  Text(
-                    item.categories.first,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                  ),
-                  const SizedBox(height: 8),
-
-                  // --- PERUBAHAN DIMULAI DI SINI ---
-                  Row(
-                    children: [
-                      // Harga dibungkus Expanded agar mendorong tombol ke kanan
-                      Expanded(
-                        child: Text(
+            Expanded(
+              flex: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
                           'Rp ${item.price}',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      // Tombol Pesan
-                      ElevatedButton(
+                      ],
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -125,23 +137,11 @@ class HomePage extends StatelessWidget {
                             ),
                           );
                         },
-                        // Styling agar tombol tidak terlalu besar
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: const Text(
-                          'Pesan',
-                          style: TextStyle(fontSize: 12),
-                        ),
+                        child: const Text('Pesan'),
                       ),
-                    ],
-                  ),
-                  // --- AKHIR PERUBAHAN ---
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

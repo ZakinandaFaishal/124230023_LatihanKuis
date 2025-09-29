@@ -9,7 +9,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Controller untuk mengambil input dari text field
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
@@ -19,9 +18,12 @@ class _LoginPageState extends State<LoginPage> {
     // Validasi username dan password
     if (_usernameController.text == 'fulan' &&
         _passwordController.text == 'fulan') {
+      // Kirim username ke HomePage saat navigasi
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(
+          builder: (context) => HomePage(username: _usernameController.text),
+        ),
       );
     } else {
       // Menampilkan pesan error jika login gagal
@@ -35,6 +37,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ScaffoldMessenger(
       key: _scaffoldKey,
@@ -45,13 +54,11 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // --- PERUBAHAN DI SINI ---
                 Icon(
                   Icons.fastfood,
                   size: 100,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                // -------------------------
                 const SizedBox(height: 24),
                 Text(
                   'Selamat Datang di FoodApp',
@@ -93,7 +100,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Widget helper untuk membuat text field dengan gaya yang konsisten
   Widget _buildTextField({
     required TextEditingController controller,
     required String labelText,
